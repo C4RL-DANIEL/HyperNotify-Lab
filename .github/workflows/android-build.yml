@@ -34,10 +34,14 @@ jobs:
           ls -la $ANDROID_HOME/platforms/ || echo "No platforms"
           ls -la $ANDROID_HOME/build-tools/ || echo "No build-tools"
 
+      - name: Create local.properties
+        run: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
+
       - name: Make gradlew executable
         run: chmod +x android/gradlew
 
-      - name: Build with Gradle (verbose)
+      - name: Build with Gradle
         run: |
           cd android
           ./gradlew assembleDebug --no-daemon --stacktrace --info
