@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -43,6 +44,19 @@
         <receiver
             android:name=".NotificationActionReceiver"
             android:exported="false" />
+
+        <!-- Android 16 Live Update foreground service.
+             On API 36 an ongoing ProgressStyle notification is auto-promoted to a
+             Live Update chip; HyperOS projects it into the Hyper Island capsule. -->
+        <service
+            android:name=".LiveUpdateService"
+            android:exported="false"
+            android:label="HyperNotify Live Update"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Live update notification progress tracking" />
+        </service>
 
         <!-- Hyper Island style NotificationListenerService.
              This is the official, supported mechanism used by Xiaomi-style

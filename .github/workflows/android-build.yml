@@ -32,6 +32,11 @@ jobs:
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
 
+      - name: Install Android 16 platform (API 36)
+        run: |
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0" || echo "sdkmanager install failed, continuing"
+          ls $ANDROID_SDK_ROOT/platforms/ 2>/dev/null | head
+
       - name: Make gradlew executable
         run: chmod +x android/gradlew
 

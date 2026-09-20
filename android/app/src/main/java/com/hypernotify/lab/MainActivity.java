@@ -76,6 +76,8 @@ public class MainActivity extends Activity {
         root.addView(bigButton("Send Live Progress", () -> NotificationService.sendProgress(this, counter++, "Download")));
         root.addView(bigButton("Send Big Text", () -> NotificationService.sendBigText(this, counter++, "Expanded", "Tap to see more", Lorem.LONG)));
         root.addView(bigButton("Send with Actions", () -> NotificationService.sendWithActions(this, counter++, "Interactive", "Notification with action buttons")));
+        root.addView(bigButton("Start Live Update (Hyper Island)", () -> LiveUpdateService.startUpdate(this)));
+        root.addView(bigButton("Stop Live Update", () -> LiveUpdateService.stopUpdate(this)));
         root.addView(bigButton("Clear All", () -> NotificationService.cancelAll(this)));
 
         setContentView(scroll);
