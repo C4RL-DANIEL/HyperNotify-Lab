@@ -102,7 +102,7 @@ public class LiveUpdateService extends Service {
             // ProgressStyle triggers the Android 16 Live Update status-bar chip.
             Notification.ProgressStyle progressStyle = new Notification.ProgressStyle()
                     .setProgress(progress)
-                    .setMax(MAX_PROGRESS)
+                    .setMaxProgress(MAX_PROGRESS)
                     .setShortCriticalText(progress + "%"); // rendered inside the island chip
             builder.setStyle(progressStyle);
         } else {
