@@ -1,105 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.hypernotify.lab">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Permissions -->
-    <!-- Basic notification permissions -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    
-    <!-- Foreground service permissions (Android 12+) -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-    
-    <!-- Exact alarm permission (Android 12+) -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
-    
-    <!-- Xiaomi/HyperOS specific -->
-    <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE" />
-    <uses-permission android:name="com.miui.permission.USE_INTERNAL_GENERAL_API" />
-    
-    <!-- Notification policy access (for DND bypass) -->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
-    
-    <!-- System alert window (for overlay notifications) -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <!-- Features -->
     <uses-feature android:name="android.hardware.type.watch" android:required="false" />
-    <uses-feature android:name="android.hardware.type.automotive" android:required="false" />
-    <uses-feature android:name="android.hardware.type.television" android:required="false" />
 
     <application
-        android:name="${applicationName}"
         android:label="HyperNotify Lab"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/LaunchTheme"
+        android:theme="@style/AppTheme"
         android:allowBackup="true"
-        android:supportsRtl="true"
-        android:networkSecurityConfig="@xml/network_security_config"
-        tools:replace="android:label,android:theme"
-        tools:targetApi="34">
+        android:supportsRtl="true">
 
         <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleTop"
-            android:theme="@style/LaunchTheme"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize"
-            android:resizeableActivity="true"
-            android:supportsPictureInPicture="true"
-            android:autoRemoveFromRecents="false">
-            
-            <meta-data
-                android:name="io.flutter.embedding.android.NormalTheme"
-                android:resource="@style/NormalTheme" />
-            
+            android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
+            android:windowSoftInputMode="adjustResize">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            
-            <!-- Deep link support -->
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="hypernotify" />
-            </intent-filter>
         </activity>
-
-        <!-- Flutter Embedding -->
-        <meta-data
-            android:name="flutterEmbedding"
-            android:value="2" />
-
-        <!-- Notification Channels Configuration -->
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="hypernotify_default" />
-
     </application>
-
-    <!-- Queries for package visibility (Android 11+) -->
-    <queries>
-        <package android:name="com.miui.home" />
-        <package android:name="com.xiaomi.miui.launcher" />
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="https" />
-        </intent>
-        <intent>
-            <action android:name="android.intent.action.SEND" />
-            <data android:mimeType="text/plain" />
-        </intent>
-    </queries>
 
 </manifest>
