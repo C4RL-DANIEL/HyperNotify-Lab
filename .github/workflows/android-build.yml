@@ -40,18 +40,14 @@ jobs:
       - name: Analyze code
         run: flutter analyze
 
-      - name: Build APK with verbose output
+      - name: Build APK
         run: |
-          flutter build apk --debug -v 2>&1 | head -50
+          flutter build apk --debug
 
-      - name: Find APK
+      - name: Find and Upload APK
         run: |
           echo "Searching for APK files..."
           find . -name "*.apk" -type f 2>/dev/null
-          find . -name "app-debug.apk" -type f 2>/dev/null
-
-      - name: Verify APK
-        run: |
           APK_PATH=$(find . -name "app-debug.apk" -type f 2>/dev/null | head -1)
           echo "Found APK at: $APK_PATH"
           if [ -z "$APK_PATH" ]; then
