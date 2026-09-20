@@ -1,4 +1,4 @@
-// HyperNotify Lab - Minimal Flutter App
+// HyperNotify Lab - Xiaomi HyperOS Tablet Hyper Island Notification Tester
 // Main entry point
 
 import 'package:flutter/material.dart';
@@ -6,20 +6,60 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'notification/notification_service.dart';
+import 'notification/hyperos_notification.dart';
+import 'ui/main_screen.dart';
+import 'ui/settings_screen.dart';
+import 'model/notification_task.dart';
+import 'service/foreground_service.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const HyperNotifyLabApp());
+
+  // Initialize notification service
+  await NotificationService.instance.initialize();
+
+  // Initialize foreground service
+  await ForegroundService.instance.initialize();
+
+  // Check and request permissions
+  await _requestPermissions();
+
+  runApp(const ProviderScope(child: HyperNotifyLabApp()));
 }
 
-class HyperNotifyLabApp extends StatelessWidget {
+Future<void> _requestPermissions() async {
+  // Request notification permission (Android 13+)
+  if (await Permission.notification.isDenied) {
+    await Permission.notification.request();
+  }
+
+  // Request exact alarm permission for scheduled notifications (Android 12+)
+  if (await Permission.scheduleExactAlarm.isDenied) {
+    await Permission.scheduleExactAlarm.request();
+  }
+
+  // Request foreground service permissions
+  if (await Permission.foregroundService.isDenied) {
+    await Permission.foregroundService.request();
+  }
+
+  // Request foreground service data sync permission (Android 14+)
+  if (await Permission.foregroundServiceDataSync.isDenied) {
+    await Permission.foregroundServiceDataSync.request();
+  }
+}
+
+class HyperNotifyLabApp extends ConsumerWidget {
   const HyperNotifyLabApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'HyperNotify Lab',
       debugShowCheckedModeBanner: false,
@@ -29,6 +69,24 @@ class HyperNotifyLabApp extends StatelessWidget {
           seedColor: const Color(0xFF006EFF),
           brightness: Brightness.light,
         ),
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+        ),
+        cardTheme: CardThemeData(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
@@ -36,61 +94,30 @@ class HyperNotifyLabApp extends StatelessWidget {
           seedColor: const Color(0xFF006EFF),
           brightness: Brightness.dark,
         ),
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+        ),
+        cardTheme: CardThemeData(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
       ),
       themeMode: ThemeMode.system,
       home: const MainScreen(),
-    );
-  }
-}
-
-class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('HyperNotify Lab'),
-        centerTitle: true,
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.notifications_active,
-              size: 64,
-              color: Color(0xFF006EFF),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'HyperNotify Lab',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Xiaomi HyperOS Tablet Hyper Island Notification Tester',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 32),
-            Text(
-              'App builds successfully!',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.green,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
+      routes: {
+        '/settings': (context) => const SettingsScreen(),
+      },
     );
   }
 }
