@@ -27,13 +27,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Verify pre-installed Android SDK
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-          ls -la $ANDROID_HOME/platforms/ 2>/dev/null | head
-          ls -la $ANDROID_HOME/build-tools/ 2>/dev/null | head
-
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
 
@@ -41,11 +34,9 @@ jobs:
         run: chmod +x android/gradlew
 
       - name: Build Debug APK
-        working-directory: ./android
-        env:
-          ANDROID_HOME: ${{ env.ANDROID_HOME }}
-          ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: |
+          cd android
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

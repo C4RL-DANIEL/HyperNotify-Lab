@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "HyperNotify Lab"
+rootProject.name = "HyperNotifyLab"
 include(":app")
