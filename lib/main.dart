@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'notification/notification_service.dart';
 import 'notification/hyperos_notification.dart';
@@ -29,7 +30,7 @@ void main() async {
   // Check and request permissions
   await _requestPermissions();
 
-  runApp(const HyperNotifyLabApp());
+  runApp(const ProviderScope(child: HyperNotifyLabApp()));
 }
 
 Future<void> _requestPermissions() async {
@@ -54,44 +55,11 @@ Future<void> _requestPermissions() async {
   }
 }
 
-class HyperNotifyLabApp extends StatefulWidget {
+class HyperNotifyLabApp extends ConsumerWidget {
   const HyperNotifyLabApp({super.key});
 
   @override
-  State<HyperNotifyLabApp> createState() => _HyperNotifyLabAppState();
-}
-
-class _HyperNotifyLabAppState extends State<HyperNotifyLabApp> {
-  ThemeMode _themeMode = ThemeMode.system;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadThemePreference();
-  }
-
-  Future<void> _loadThemePreference() async {
-    final prefs = await SharedPreferences.getInstance();
-    final themeIndex = prefs.getInt('theme_mode') ?? 0;
-    setState(() {
-      _themeMode = ThemeMode.values[themeIndex];
-    });
-  }
-
-  Future<void> _saveThemePreference(ThemeMode mode) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('theme_mode', mode.index);
-  }
-
-  void _toggleTheme() {
-    setState(() {
-      _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
-      _saveThemePreference(_themeMode);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'HyperNotify Lab',
       debugShowCheckedModeBanner: false,
@@ -145,16 +113,10 @@ class _HyperNotifyLabAppState extends State<HyperNotifyLabApp> {
           ),
         ),
       ),
-      themeMode: _themeMode,
-      home: MainScreen(
-        onThemeToggle: _toggleTheme,
-        themeMode: _themeMode,
-      ),
+      themeMode: ThemeMode.system,
+      home: const MainScreen(),
       routes: {
-        '/settings': (context) => SettingsScreen(
-              onThemeToggle: _toggleTheme,
-              themeMode: _themeMode,
-            ),
+        '/settings': (context) => const SettingsScreen(),
       },
     );
   }

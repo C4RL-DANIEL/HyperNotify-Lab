@@ -13,14 +13,7 @@ import '../service/foreground_service.dart';
 import '../utils/tablet_layout.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
-  final VoidCallback onThemeToggle;
-  final ThemeMode themeMode;
-
-  const SettingsScreen({
-    super.key,
-    required this.onThemeToggle,
-    required this.themeMode,
-  });
+  const SettingsScreen({super.key});
 
   @override
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
@@ -131,11 +124,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               IconButton(
                 icon: Icon(
-                  widget.themeMode == ThemeMode.dark 
+                  _themeMode == 'dark' 
                       ? Icons.light_mode 
                       : Icons.dark_mode,
                 ),
-                onPressed: widget.onThemeToggle,
+                onPressed: _toggleTheme,
                 tooltip: 'Toggle Theme',
               ),
             ],
@@ -282,7 +275,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   onChanged: (value) => setState(() {
                     _themeMode = value!;
                     _saveSettings();
-                    widget.onThemeToggle();
                   }),
                   underline: const SizedBox(),
                 ),
@@ -490,5 +482,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
+  }
+
+  void _toggleTheme() {
+    setState(() {
+      _themeMode = _themeMode == 'dark' ? 'light' : 'dark';
+      _saveSettings();
+    });
   }
 }
