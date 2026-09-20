@@ -15,7 +15,10 @@ jobs:
   build:
     name: Build APK
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
+    container:
+      image: cirrusci/android-sdk:34
+      options: --user root
 
     steps:
       - name: Checkout
@@ -26,13 +29,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          api-level: 34
-          ndk-version: r26c
-          build-tools-version: 34.0.0
 
       - name: Make gradlew executable
         run: chmod +x android/gradlew
