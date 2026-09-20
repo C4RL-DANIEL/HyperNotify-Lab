@@ -41,12 +41,12 @@ jobs:
       - name: Verify Flutter configuration
         run: flutter doctor -v
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          api-level: 34
-          ndk-version: r26c
-          build-tools-version: '34.0.0'
+      - name: Configure Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          ls -la $ANDROID_HOME/platforms/ || echo "Platforms not found"
+          ls -la $ANDROID_HOME/build-tools/ || echo "Build tools not found"
 
       - name: Configure Gradle
         run: |
@@ -125,10 +125,10 @@ jobs:
       - name: Get Flutter dependencies
         run: flutter pub get
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          api-level: 34
+      - name: Configure Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
 
       - name: Configure Gradle
         run: |
@@ -176,11 +176,7 @@ jobs:
 
       - name: Run Flutter tests
         run: |
-          if [ -d "test" ] && [ "$(ls -A test)" ]; then
-            flutter test --coverage
-          else
-            echo "No test files found, skipping Flutter tests"
-          fi
+          flutter test --no-coverage
 
       - name: Run Android unit tests
         run: |
