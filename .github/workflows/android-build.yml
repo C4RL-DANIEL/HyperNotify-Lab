@@ -10,122 +10,52 @@ on:
       - main
       - master
   workflow_dispatch:
-  release:
-    types: [created]
 
 jobs:
-  build-android:
-    name: Build Android APK (Gradle)
+  build:
+    name: Build APK
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    defaults:
-      run:
-        working-directory: android
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Set up JDK 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: 'zulu'
           java-version: '17'
-          cache: gradle
 
-      - name: Configure Android SDK
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-          ls -la $ANDROID_HOME/platforms/ || echo "Platforms not found"
-          ls -la $ANDROID_HOME/build-tools/ || echo "Build tools not found"
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.6'
+          channel: 'stable'
+          cache: true
 
-      - name: Make gradlew executable
-        run: chmod +x gradlew
+      - name: Get dependencies
+        run: flutter pub get
 
-      - name: Build Debug APK with Gradle
-        run: |
-          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Build APK
+        run: flutter build apk --debug
 
-      - name: Verify APK exists
-        run: |
-          ls -la app/build/outputs/apk/debug/app-debug.apk
-          test -f app/build/outputs/apk/debug/app-debug.apk
-
-      - name: Get APK info
-        id: apk_info
-        run: |
-          APK_PATH="app/build/outputs/apk/debug/app-debug.apk"
-          SIZE=$(stat -c%s "$APK_PATH")
-          SHA256=$(sha256sum "$APK_PATH" | cut -d' ' -f1)
-          echo "APK_SIZE=$SIZE" >> $GITHUB_OUTPUT
-          echo "APK_SHA256=$SHA256" >> $GITHUB_OUTPUT
-          echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
-
-      - name: Upload Debug APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: HyperNotify-Lab-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
           retention-days: 30
-          compression-level: 6
-          if-no-files-found: error
-
-  create-release:
-    name: Create Release
-    needs: build-android
-    if: github.event_name == 'release' && needs.build-android.result == 'success'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Download APK artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: HyperNotify-Lab-debug
-          path: .
-
-      - name: Upload to Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: app-debug.apk
-          tag_name: ${{ github.ref_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   notify:
-    name: Notify Status
-    needs: [build-android]
+    name: Notify
+    needs: build
     runs-on: ubuntu-latest
     if: always()
     steps:
-      - name: Check build status
-        run: |
-          if [ "${{ needs.build-android.result }}" == "success" ]; then
-            echo "✅ Build passed!"
-            echo "BUILD_STATUS=success" >> $GITHUB_ENV
+      - run: |
+          if [ "${{ needs.build.result }}" == "success" ]; then
+            echo "✅ Build passed! APK available in artifacts."
           else
             echo "❌ Build failed"
-            echo "BUILD_STATUS=failure" >> $GITHUB_ENV
-          fi
-
-      - name: Summary
-        run: |
-          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Build Android | ${{ needs.build-android.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ env.BUILD_STATUS }}" == "success" ]; then
-            echo "### ✅ Build Successful" >> $GITHUB_STEP_SUMMARY
-            echo "- APK: \`android/app/build/outputs/apk/debug/app-debug.apk\`" >> $GITHUB_STEP_SUMMARY
-            echo "- Size: ${{ steps.apk_info.outputs.APK_SIZE }} bytes" >> $GITHUB_STEP_SUMMARY
-            echo "- SHA256: ${{ steps.apk_info.outputs.APK_SHA256 }}" >> $GITHUB_STEP_SUMMARY
-            echo "- **Download from Artifacts**: [HyperNotify-Lab-debug](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "### ❌ Build Failed" >> $GITHUB_STEP_SUMMARY
-            echo "Check the build logs for details." >> $GITHUB_STEP_SUMMARY
           fi
