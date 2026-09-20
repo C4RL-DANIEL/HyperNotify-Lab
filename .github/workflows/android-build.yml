@@ -16,6 +16,8 @@ jobs:
     name: Build APK
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -38,10 +40,42 @@ jobs:
           cd android
           ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Upload APK as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: HyperNotify-Lab-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
+          retention-days: 90
           if-no-files-found: error
+
+      - name: Copy APK to root
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk HyperNotify-Lab-debug.apk
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: HyperNotify Lab v1.0.0
+          body: |
+            ## HyperNotify Lab v1.0.0
+
+            **Xiaomi HyperOS Tablet Hyper Island Notification Tester**
+
+            ✅ APK built successfully in GitHub Actions!
+
+            ### 📦 Download APK
+            - **HyperNotify-Lab-debug.apk** (attached to this release)
+
+            ### Download Source Code
+            - [Source ZIP](https://github.com/${{ github.repository }}/archive/refs/tags/v1.0.0.zip)
+            - Clone: `git clone https://github.com/${{ github.repository }}.git`
+
+            ### App Details
+            - Package: `com.hypernotify.lab`
+            - Min Android: 10 (API 29)
+            - Target Android: 14 (API 34)
+          files: HyperNotify-Lab-debug.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
