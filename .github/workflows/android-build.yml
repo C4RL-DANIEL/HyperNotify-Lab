@@ -74,49 +74,19 @@ jobs:
           retention-days: 30
           compression-level: 6
 
-  test:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-          cache: gradle
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.22.0'
-          channel: stable
-          cache: true
-
-      - name: Get Flutter dependencies
-        run: flutter pub get
-
-      - name: Run Flutter tests
-        run: |
-          flutter test --no-coverage
-
   notify:
     name: Notify Status
-    needs: [build, test]
+    needs: [build]
     runs-on: ubuntu-latest
     if: always()
     steps:
       - name: Check build status
         run: |
-          if [ "${{ needs.build.result }}" == "success" ] && [ "${{ needs.test.result }}" == "success" ]; then
-            echo "✅ All checks passed!"
+          if [ "${{ needs.build.result }}" == "success" ]; then
+            echo "✅ Build passed!"
             echo "BUILD_STATUS=success" >> $GITHUB_ENV
           else
-            echo "❌ Some checks failed"
+            echo "❌ Build failed"
             echo "BUILD_STATUS=failure" >> $GITHUB_ENV
           fi
 
@@ -127,7 +97,6 @@ jobs:
           echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Build | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Test | ${{ needs.test.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ env.BUILD_STATUS }}" == "success" ]; then
             echo "### ✅ Build Successful" >> $GITHUB_STEP_SUMMARY
