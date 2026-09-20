@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary brand colors -->
+    <color name="primary">#006EFF</color>
+    <color name="primary_variant">#0052CC</color>
+    <color name="primary_container">#D6E4FF</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="on_primary_container">#001D4A</color>
+    
+    <!-- Secondary colors -->
+    <color name="secondary">#6200EE</color>
+    <color name="secondary_variant">#3700B3</color>
+    <color name="secondary_container">#E8DEF8</color>
+    <color name="on_secondary">#FFFFFF</color>
+    <color name="on_secondary_container">#1D0043</color>
+    
+    <!-- Tertiary colors -->
+    <color name="tertiary">#00675C</color>
+    <color name="tertiary_variant">#004D44</color>
+    <color name="tertiary_container">#A7F0E4</color>
+    <color name="on_tertiary">#FFFFFF</color>
+    <color name="on_tertiary_container">#00201B</color>
+    
+    <!-- Error colors -->
+    <color name="error">#BA1A1A</color>
+    <color name="error_container">#FFDAD6</color>
+    <color name="on_error">#FFFFFF</color>
+    <color name="on_error_container">#410002</color>
+    
+    <!-- Surface colors -->
+    <color name="surface">#FFFBFE</color>
+    <color name="on_surface">#1C1B1F</color>
+    <color name="surface_variant">#E7E0EC</color>
+    <color name="on_surface_variant">#49454F</color>
+    <color name="surface_container">#F7EDF7</color>
+    <color name="surface_container_high">#EDE0ED</color>
+    <color name="surface_container_highest">#E2D6E2</color>
+    
+    <!-- Background -->
+    <color name="background">#FFFBFE</color>
+    <color name="on_background">#1C1B1F</color>
+    
+    <!-- Outline -->
+    <color name="outline">#79747E</color>
+    <color name="outline_variant">#CAC4D0</color>
+    
+    <!-- Inverse -->
+    <color name="inverse_surface">#313033</color>
+    <color name="inverse_on_surface">#F4EFF4</color>
+    <color name="inverse_primary">#A6C8FF</color>
+    
+    <!-- Shadow -->
+    <color name="shadow">#000000</color>
+    <color name="scrim">#000000</color>
+    
+    <!-- Status colors -->
+    <color name="success">#4CAF50</color>
+    <color name="warning">#FF9800</color>
+    <color name="info">#2196F3</color>
+    
+    <!-- HyperOS specific -->
+    <color name="hyperos_blue">#006EFF</color>
+    <color name="hyperos_orange">#FF6B00</color>
+    <color name="hyperos_green">#00C853</color>
+    
+    <!-- Notification colors -->
+    <color name="notification_bg">#1F1F1F</color>
+    <color name="notification_text">#FFFFFF</color>
+    <color name="notification_accent">#006EFF</color>
+</resources>

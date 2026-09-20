@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HyperNotify Lab</string>
+    <string name="app_name_short">HyperNotify</string>
+    
+    <!-- Notification channels -->
+    <string name="channel_default_name">Default Notifications</string>
+    <string name="channel_default_desc">Standard notifications for HyperNotify Lab</string>
+    <string name="channel_high_name">High Priority Notifications</string>
+    <string name="channel_high_desc">High priority notifications with sound and vibration</string>
+    <string name="channel_critical_name">Critical Notifications</string>
+    <string name="channel_critical_desc">Critical notifications that bypass Do Not Disturb</string>
+    <string name="channel_hyperos_name">HyperOS Island Notifications</string>
+    <string name="channel_hyperos_desc">Notifications optimized for Xiaomi HyperOS Super Island</string>
+    <string name="channel_test_name">Test Notifications</string>
+    <string name="channel_test_desc">Test notifications for development</string>
+    <string name="channel_foreground_name">Foreground Service</string>
+    <string name="channel_foreground_desc">Ongoing notification for HyperNotify Lab foreground service</string>
+    
+    <!-- Permissions -->
+    <string name="permission_notification_rationale">This app needs notification permission to show test notifications</string>
+    <string name="permission_exact_alarm_rationale">This app needs exact alarm permission to schedule notifications</string>
+    <string name="permission_foreground_service_rationale">This app needs foreground service permission to run background tasks</string>
+    
+    <!-- Actions -->
+    <string name="action_view">View</string>
+    <string name="action_dismiss">Dismiss</string>
+    <string name="action_reply">Reply</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_stop">Stop</string>
+    
+    <!-- Settings -->
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_foreground_service">Foreground Service</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_permissions">Permissions</string>
+    <string name="settings_device_info">Device Information</string>
+    <string name="settings_actions">Actions</string>
+    <string name="settings_about">About</string>
+    
+    <!-- HyperOS -->
+    <string name="hyperos_super_island">Super Island</string>
+    <string name="hyperos_hyper_island">Hyper Island</string>
+    <string name="hyperos_not_detected">HyperOS not detected on this device</string>
+    <string name="hyperos_detected">HyperOS detected</string>
+    
+    <!-- Errors -->
+    <string name="error_permission_denied">Permission denied</string>
+    <string name="error_notification_failed">Failed to send notification</string>
+    <string name="error_service_failed">Failed to start service</string>
+</resources>
