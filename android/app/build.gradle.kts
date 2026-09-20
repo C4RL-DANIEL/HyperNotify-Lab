@@ -6,7 +6,6 @@ plugins {
 android {
     namespace = "com.hypernotify.lab"
     compileSdk = 34
-    ndkVersion = "26.1.10909125"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -33,21 +32,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Use the default debug signing config for now
             signingConfig = signingConfigs.getByName("debug")
         }
         getByName("debug") {
             isMinifyEnabled = false
             isDebuggable = true
-            signingConfig = signingConfigs.getByName("debug")
-        }
-    }
-
-    signingConfigs {
-        create("debug") {
-            storeFile = file("../debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
+            // AGP provides a default debug signing config automatically
         }
     }
 }
