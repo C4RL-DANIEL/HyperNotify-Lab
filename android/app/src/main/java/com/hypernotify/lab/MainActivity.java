@@ -67,16 +67,16 @@ public class MainActivity extends Activity {
         root.addView(statusView);
 
         // Buttons
-        root.addView(bigButton("Allow Notifications", c -> requestNotificationPermission()));
-        root.addView(bigButton("Enable Island Listener Access", c -> requestListenerAccess()));
-        root.addView(bigButton("Send Default Notification", c -> NotificationService.sendDefault(this, counter++, "Default", "A standard notification")));
-        root.addView(bigButton("Send High / Heads-Up (Island)", c -> NotificationService.sendHigh(this, counter++, "Hyper Island", "Heads-up notification for Hyper Island")));
-        root.addView(bigButton("Send Critical Alert", c -> NotificationService.sendCritical(this, counter++, "Critical", "Critical alert that bypasses DnD")));
-        root.addView(bigButton("Send Ongoing (Pill-Style)", c -> NotificationService.sendOngoing(this, counter++, "Live Activity", "Ongoing pillar-style notification")));
-        root.addView(bigButton("Send Live Progress", c -> NotificationService.sendProgress(this, counter++, "Download")));
-        root.addView(bigButton("Send Big Text", c -> NotificationService.sendBigText(this, counter++, "Expanded", "Tap to see more", Lorem.LONG)));
-        root.addView(bigButton("Send with Actions", c -> NotificationService.sendWithActions(this, counter++, "Interactive", "Notification with action buttons")));
-        root.addView(bigButton("Clear All", c -> NotificationService.cancelAll(this)));
+        root.addView(bigButton("Allow Notifications", () -> requestNotificationPermission()));
+        root.addView(bigButton("Enable Island Listener Access", () -> requestListenerAccess()));
+        root.addView(bigButton("Send Default Notification", () -> NotificationService.sendDefault(this, counter++, "Default", "A standard notification")));
+        root.addView(bigButton("Send High / Heads-Up (Island)", () -> NotificationService.sendHigh(this, counter++, "Hyper Island", "Heads-up notification for Hyper Island")));
+        root.addView(bigButton("Send Critical Alert", () -> NotificationService.sendCritical(this, counter++, "Critical", "Critical alert that bypasses DnD")));
+        root.addView(bigButton("Send Ongoing (Pill-Style)", () -> NotificationService.sendOngoing(this, counter++, "Live Activity", "Ongoing pillar-style notification")));
+        root.addView(bigButton("Send Live Progress", () -> NotificationService.sendProgress(this, counter++, "Download")));
+        root.addView(bigButton("Send Big Text", () -> NotificationService.sendBigText(this, counter++, "Expanded", "Tap to see more", Lorem.LONG)));
+        root.addView(bigButton("Send with Actions", () -> NotificationService.sendWithActions(this, counter++, "Interactive", "Notification with action buttons")));
+        root.addView(bigButton("Clear All", () -> NotificationService.cancelAll(this)));
 
         setContentView(scroll);
         refreshStatus();
