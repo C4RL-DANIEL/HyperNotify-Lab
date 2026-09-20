@@ -14,12 +14,13 @@ on:
     types: [created]
 
 jobs:
-  build:
-    name: Build APK
+  build-android:
+    name: Build Android APK (Gradle)
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-    env:
-      FLUTTER_VERSION: "3.22.0"
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: android
 
     steps:
       - name: Checkout repository
@@ -34,45 +35,29 @@ jobs:
           java-version: '17'
           cache: gradle
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-          cache-key: flutter-${{ runner.os }}-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
-
       - name: Configure Android SDK
         run: |
-          echo "ANDROID_HOME=${ANDROID_HOME}" >> $GITHUB_ENV
-          echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT}" >> $GITHUB_ENV
-          ls -la $ANDROID_HOME/platforms/android-34/ || echo "Android 34 platform not found"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          ls -la $ANDROID_HOME/platforms/ || echo "Platforms not found"
           ls -la $ANDROID_HOME/build-tools/ || echo "Build tools not found"
 
-      - name: Install Android licenses
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Build Debug APK with Gradle
         run: |
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          yes | flutter doctor --android-licenses || true
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
-      - name: Get Flutter dependencies
-        run: flutter pub get
-
-      - name: Verify Flutter configuration
-        run: flutter doctor -v
-
-      - name: Build Debug APK
+      - name: Verify APK exists
         run: |
-          flutter build apk --debug --no-tree-shake-icons -v
-
-      - name: Verify APK
-        run: |
-          ls -la build/app/outputs/flutter-apk/app-debug.apk
-          test -f build/app/outputs/flutter-apk/app-debug.apk
+          ls -la app/build/outputs/apk/debug/app-debug.apk
+          test -f app/build/outputs/apk/debug/app-debug.apk
 
       - name: Get APK info
         id: apk_info
         run: |
-          APK_PATH="build/app/outputs/flutter-apk/app-debug.apk"
+          APK_PATH="app/build/outputs/apk/debug/app-debug.apk"
           SIZE=$(stat -c%s "$APK_PATH")
           SHA256=$(sha256sum "$APK_PATH" | cut -d' ' -f1)
           echo "APK_SIZE=$SIZE" >> $GITHUB_OUTPUT
@@ -83,15 +68,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: HyperNotify-Lab-debug
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
           compression-level: 6
           if-no-files-found: error
 
   create-release:
     name: Create Release
-    needs: build
-    if: github.event_name == 'release' && needs.build.result == 'success'
+    needs: build-android
+    if: github.event_name == 'release' && needs.build-android.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -112,13 +97,13 @@ jobs:
 
   notify:
     name: Notify Status
-    needs: [build]
+    needs: [build-android]
     runs-on: ubuntu-latest
     if: always()
     steps:
       - name: Check build status
         run: |
-          if [ "${{ needs.build.result }}" == "success" ]; then
+          if [ "${{ needs.build-android.result }}" == "success" ]; then
             echo "✅ Build passed!"
             echo "BUILD_STATUS=success" >> $GITHUB_ENV
           else
@@ -132,11 +117,11 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Build | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Android | ${{ needs.build-android.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ env.BUILD_STATUS }}" == "success" ]; then
             echo "### ✅ Build Successful" >> $GITHUB_STEP_SUMMARY
-            echo "- APK: \`build/app/outputs/flutter-apk/app-debug.apk\`" >> $GITHUB_STEP_SUMMARY
+            echo "- APK: \`android/app/build/outputs/apk/debug/app-debug.apk\`" >> $GITHUB_STEP_SUMMARY
             echo "- Size: ${{ steps.apk_info.outputs.APK_SIZE }} bytes" >> $GITHUB_STEP_SUMMARY
             echo "- SHA256: ${{ steps.apk_info.outputs.APK_SHA256 }}" >> $GITHUB_STEP_SUMMARY
             echo "- **Download from Artifacts**: [HyperNotify-Lab-debug](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)" >> $GITHUB_STEP_SUMMARY
