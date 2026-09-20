@@ -10,26 +10,6 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.6
-  # Notification handling
-  flutter_local_notifications: ^17.1.2
-  # Permission handling
-  permission_handler: ^11.3.1
-  # Android-specific functionality
-  android_intent_plus: ^5.2.1
-  # Background execution
-  workmanager: ^0.5.2
-  # Shared preferences for settings
-  shared_preferences: ^2.2.3
-  # Device info
-  device_info_plus: ^10.1.0
-  # URL launcher for intents
-  url_launcher: ^6.2.5
-  # Timezone for scheduled notifications
-  timezone: ^0.9.3
-  # State management
-  flutter_riverpod: ^2.5.1
-  # Intl for date formatting
-  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
