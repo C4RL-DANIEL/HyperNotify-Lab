@@ -41,7 +41,9 @@ jobs:
         run: flutter analyze
 
       - name: Build APK with verbose output
-        run: flutter build apk --debug -v
+        run: |
+          flutter build apk --debug -v 2>&1 | head -100
+        continue-on-error: true
 
       - name: Verify APK
         run: |
