@@ -99,11 +99,14 @@ public class LiveUpdateService extends Service {
                     .setContentIntent(pendingIntent)
                     .setCategory(Notification.CATEGORY_PROGRESS);
 
+            // Set max + progress on the builder; ProgressStyle's getProgressMax()
+            // reads this value for the island chip rendering.
+            builder.setProgress(MAX_PROGRESS, progress, false);
+
             // ProgressStyle triggers the Android 16 Live Update status-bar chip.
             Notification.ProgressStyle progressStyle = new Notification.ProgressStyle()
                     .setProgress(progress)
-                    .setMaxProgress(MAX_PROGRESS)
-                    .setShortCriticalText(progress + "%"); // rendered inside the island chip
+                    .setStyledByProgress(true);
             builder.setStyle(progressStyle);
         } else {
             // Fallback for Android 10-15 / direct HyperOS projection.
