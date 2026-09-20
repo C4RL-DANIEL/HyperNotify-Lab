@@ -14,9 +14,9 @@ android/*.iml
 android/local.properties
 android/app/build/
 android/app/release.keystore
-android/gradlew
-android/gradlew.bat
-android/gradle/wrapper/gradle-wrapper.jar
+# android/gradlew
+# android/gradlew.bat
+# android/gradle/wrapper/gradle-wrapper.jar
 
 # iOS
 ios/.generated/
