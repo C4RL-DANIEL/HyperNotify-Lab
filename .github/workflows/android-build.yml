@@ -26,18 +26,13 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-          cache: gradle
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          api-level: 34
-          ndk-version: r26c
-          build-tools-version: '34.0.0'
           cmdline-tools-version: latest
-
-      - name: Accept Android licenses
-        run: yes | sdkmanager --licenses || true
+          accept-android-sdk-licenses: true
+          log-accepted-android-sdk-licenses: true
 
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
