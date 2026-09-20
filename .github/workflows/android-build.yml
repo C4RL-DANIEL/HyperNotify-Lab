@@ -13,70 +13,40 @@ on:
 
 jobs:
   build:
-    name: Build APK (Gradle)
+    name: Build APK
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    defaults:
-      run:
-        working-directory: android
+    timeout-minutes: 45
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
-          cache: gradle
+          java-version: 17
 
-      - name: Configure Android SDK
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          ndk-version: r26c
+          build-tools-version: 34.0.0
+          cmdline-tools-version: latest
 
       - name: Make gradlew executable
-        run: chmod +x gradlew
+        run: chmod +x android/gradlew
 
-      - name: Build Debug APK with Gradle
+      - name: Build with Gradle
         run: |
+          cd android
           ./gradlew assembleDebug --no-daemon --stacktrace
 
-      - name: Verify APK exists
-        run: |
-          ls -la app/build/outputs/apk/debug/app-debug.apk
-          test -f app/build/outputs/apk/debug/app-debug.apk
-
-      - name: Get APK info
-        id: apk_info
-        run: |
-          APK_PATH="app/build/outputs/apk/debug/app-debug.apk"
-          SIZE=$(stat -c%s "$APK_PATH")
-          SHA256=$(sha256sum "$APK_PATH" | cut -d' ' -f1)
-          echo "APK_SIZE=$SIZE" >> $GITHUB_OUTPUT
-          echo "APK_SHA256=$SHA256" >> $GITHUB_OUTPUT
-          echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
-
-      - name: Upload Debug APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: HyperNotify-Lab-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
-          compression-level: 6
           if-no-files-found: error
-
-  notify:
-    name: Notify
-    needs: build
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - name: Check build status
-        run: |
-          if [ "${{ needs.build.result }}" == "success" ]; then
-            echo "✅ Build passed! APK available in artifacts."
-          else
-            echo "❌ Build failed"
-          fi
